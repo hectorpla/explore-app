@@ -1,0 +1,31 @@
+{
+  "name": "explore-app",
+  "version": "1.0.0",
+  "description": "tentative prototype",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build:live",
+    "build": "tsc -p .",
+    "build:live": "nodemon --watch '**/*.ts' --exec 'ts-node' server.ts"
+  },
+  "keywords": [
+    "yelp",
+    "explore"
+  ],
+  "author": "hclng",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "graphql": "^14.0.2",
+    "mongoose": "^5.2.15",
+    "node-fetch": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/graphql": "^14.0.0",
+    "@types/mongoose": "^5.2.16",
+    "@types/node-fetch": "^2.1.2",
+    "typescript": "^3.0.3"
+  }
+}
