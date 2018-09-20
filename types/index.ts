@@ -1,11 +1,4 @@
-export interface IRawCategory {
-  title: string;
-  alias: string;
-}
-
-export interface ICategory extends IRawCategory {
-  parent_categories: IRawCategory[];
-}
+import { ICategory } from './data';
 
 export interface ICountryCategory {
   country: string;
@@ -13,3 +6,5 @@ export interface ICountryCategory {
   categories: ICategory[];
   updated_date?: Date;
 }
+
+export * from './data';
