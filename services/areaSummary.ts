@@ -1,12 +1,13 @@
 import fetch from 'node-fetch';
 import * as _ from 'lodash';
+import gql from 'graphql-tag';
 
 import { IArea, IBusiness, IPlaceOfInterestSummary } from '../types';
 import { AreaModel } from '../models';
 import { YELP_GRAPHQL_URL, graphqlHeaderFactory } from '../common';
 import { PLACE_INTEREST } from '../constants';
 
-const areaQueryFactory = (area: string, category: string) => `query {
+const areaQueryFactory = (area: string, category: string) => gql`query {
   search(location: "${area}", term:"${category}") {
     total
     business {
@@ -60,6 +61,11 @@ const getSummaryOfCategory = (
   }
 }
 
+/**
+ * fetch info from Yelp API and summarize the area infomation
+ * currently only consider places of interest
+ * @param area name of the term, ex.: tokyo
+ */
 export const storeAreaSummaries = (area: string) => {
   const getFactory = getAreaInfo(area);
 

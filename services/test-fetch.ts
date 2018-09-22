@@ -1,4 +1,4 @@
-import { storeCategories } from "./fetch";
+import { storeCategories } from "./countryCategories";
 import setup = require('../common/setup');
 import { storeAreaSummaries } from "./areaSummary";
 import { graphqlHeaderFactory } from "../common";

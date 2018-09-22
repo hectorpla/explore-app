@@ -1,0 +1,5 @@
+# for graphql-tag: not working yet
+projects:
+  app:
+    schemaPath: graphql/area.graphql
+    includes: ["**/*.graphql", "**/*.gql"]

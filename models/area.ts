@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
-import { IArea, IBusiness } from '../types';
+import { IArea, IBusiness, IPlaceOfInterestSummary } from '../types';
+
+/**
+ * pattern: as {[key in keyof <Interface>]: any}, a link to type defintion
+ * boilerplate, `shallow` check
+ */
 
 export interface IAreaModel extends mongoose.Document, IArea {
 }
@@ -18,7 +23,7 @@ const PlaceOfInterestSummarySchema = new mongoose.Schema({
   category: String,
   total: Number,
   tops: [BusinessSchema]
-});
+} as {[key in keyof IPlaceOfInterestSummary]: any});
 
 const AreaSchema = new mongoose.Schema({
   term: {
@@ -26,6 +31,6 @@ const AreaSchema = new mongoose.Schema({
     unique: true
   },
   place_of_interest_summaries: [PlaceOfInterestSummarySchema]
-});
+} as {[key in keyof IArea]: any});
 
 export const AreaModel = mongoose.model('Area', AreaSchema);

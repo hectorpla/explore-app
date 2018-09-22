@@ -69,4 +69,15 @@ export interface IArea {
   place_of_interest_summaries: IPlaceOfInterestSummary[];
 }
 
+export interface Somei {
+
+}
+
+// ! weird, the following snippet compile!!!
+const area= {
+  term: '',
+  // feature_places: [],
+  // place_of_interest_summaries: []
+} as IArea
+
 // TODO add event

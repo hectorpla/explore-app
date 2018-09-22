@@ -8,3 +8,5 @@ export const graphqlHeaderFactory = (apiKey?: string) => ({
   Authorization: `Bearer ${apiKey || process.env.API_KEY}`,
   'Content-Type': 'application/graphql'
 });
+
+export const prettyPrintJson = (obj: Object) => JSON.stringify(obj, null, 2);

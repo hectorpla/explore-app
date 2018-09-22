@@ -1,41 +1,11 @@
 import fetch from 'node-fetch';
+import gql from 'graphql-tag';
 
 import { CountryCategoryModel, ICountryCategoryModel } from '../models';
-
-import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList } from 'graphql';
 import { ICountryCategory } from '../types';
 import { YELP_GRAPHQL_URL, graphqlHeaderFactory } from '../common';
 
-
-// const CategoryType = new GraphQLList
-
-// const CategorieListType = new GraphQLObjectType({
-//   name: 'categories',
-//   fields: {
-//     total: {
-//       type: GraphQLString
-//     },
-//     category: {
-//       type: new GraphQLList
-//     }
-//   }
-// });
-
-
-// const schema = new GraphQLSchema({
-//   query: new GraphQLObjectType({
-//     name: 'RootQueryType',
-//     fields: {
-//       categories: {
-//         type: CategorieListType
-//       }
-//     }
-//   })
-// });
-
-
-
-const categoryQueryFactory = (queryCountry: string) => `{
+const categoryQueryFactory = (queryCountry: string) => gql`{
   categories(country: "${queryCountry}") {
     total
     category {

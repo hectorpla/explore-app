@@ -1,0 +1,24 @@
+type Business {
+  name: String
+}
+
+type PlaceOfInterestSummary {
+  category: String!
+  total: Int!
+  tops: [Business!]!
+}
+
+type Area {
+  term: String
+  feature_places: [String!]
+  place_of_interest_summaries: [PlaceOfInterestSummary!]!
+}
+
+type Query {
+  areaSummary(term: String!): Area
+}
+
+schema {
+  query: Query
+}
+
