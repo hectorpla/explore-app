@@ -1,8 +1,10 @@
 import fetch from 'node-fetch';
+
 import { CountryCategoryModel, ICountryCategoryModel } from '../models';
 
 import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList } from 'graphql';
 import { ICountryCategory } from '../types';
+import { YELP_GRAPHQL_URL, graphqlHeaderFactory } from '../common';
 
 
 // const CategoryType = new GraphQLList
@@ -47,12 +49,9 @@ const categoryQueryFactory = (queryCountry: string) => `{
   }
 }`;
 
-export const storeCategories = (queryCountry: string) => fetch('https://api.yelp.com/v3/graphql', {
+export const storeCategories = (queryCountry: string) => fetch(YELP_GRAPHQL_URL, {
   method: 'POST',
-  headers: {
-    Authorization: `Bearer ${process.env.API_KEY}`,
-    'Content-Type': 'application/graphql'
-  },
+  headers: graphqlHeaderFactory(),
   body: categoryQueryFactory(queryCountry),
   // useNewUrlParser: true
 }).then(res => res.json())
@@ -62,10 +61,8 @@ export const storeCategories = (queryCountry: string) => fetch('https://api.yelp
     console.log(category);
     new CountryCategoryModel({
       country: queryCountry,
-      categories: category,
+      categories: category, // !no static type check here
       total
     } as ICountryCategory)
-      .save(err => {
-        if (err) console.error(err);
-      });
+      .save().catch(err => console.log(err));
   });
