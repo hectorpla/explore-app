@@ -1,12 +1,19 @@
 import mongoose from 'mongoose';
 
-export = mongoose.connect(process.env.MONGODB_HOST!)
-  .catch(() => {
-    console.log('failed to connect mongoDB')
-    process.exit(-1)
-  }).then(() => {
-    console.log('mongodb: connected');
-  });
+export const setup = () => {
+  mongoose.set('useCreateIndex', true);
+  mongoose.set('useFindAndModify', false);
+  return mongoose.connect(process.env.MONGODB_HOST!,
+    {
+      useNewUrlParser: true,
+    })
+    .catch(() => {
+      console.log('failed to connect mongoDB')
+      process.exit(-1)
+    }).then(() => {
+      console.log('mongodb: connected');
+    });
+}
 
 
 // ? propsed top-level async flow, didn't work

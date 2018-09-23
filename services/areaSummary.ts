@@ -1,13 +1,14 @@
 import fetch from 'node-fetch';
 import * as _ from 'lodash';
 import gql from 'graphql-tag';
+import logger from '../common/logger';
 
 import { IArea, IBusiness, IPlaceOfInterestSummary } from '../types';
 import { AreaModel } from '../models';
-import { YELP_GRAPHQL_URL, graphqlHeaderFactory } from '../common';
+import { YELP_GRAPHQL_URL, graphqlHeaderFactory, prettyPrintJson } from '../common';
 import { PLACE_INTEREST } from '../constants';
 
-const areaQueryFactory = (area: string, category: string) => gql`query {
+const areaQueryFactory = (area: string, category: string) => `query {
   search(location: "${area}", term:"${category}") {
     total
     business {
@@ -66,7 +67,7 @@ const getSummaryOfCategory = (
  * currently only consider places of interest
  * @param area name of the term, ex.: tokyo
  */
-export const storeAreaSummaries = (area: string) => {
+export const storeAreaSummaries = (area: string): Promise<IArea> => {
   const getFactory = getAreaInfo(area);
 
   const areaDoc = {
@@ -79,17 +80,49 @@ export const storeAreaSummaries = (area: string) => {
   const promises = PLACE_INTEREST.map((category, index) =>
     getFactory(category)
       .then(result => {
-        try {
-          areaDoc.place_of_interest_summaries.push(
-            getSummaryOfCategory(PLACE_INTEREST[index], result.data.search));
-        } catch (err) {
-          console.log(err);
+        if (result.errors) {
+          logger.error({
+            errors: result.errors
+          });
+          throw Error('GraphQL client error');
         }
+        areaDoc.place_of_interest_summaries.push(
+          getSummaryOfCategory(
+            PLACE_INTEREST[index],
+            result.data.search
+          )
+        );
       }));
   return Promise.all(promises).then(() => {
-    console.log('retrievied and computed', JSON.stringify(areaDoc));
-    // new AreaModel(areaDoc).save().catch(err => console.log(err));
-    AreaModel.findOneAndUpdate({ term: 'area' }, areaDoc, { upsert: true })
-      .catch(err => console.log(err));
-  });
+    logger.debug(`retrievied and computed: ${JSON.stringify(areaDoc)}`);
+    return AreaModel.findOneAndUpdate(
+      { term: 'area' },
+      areaDoc,
+      { upsert: true }
+    ).catch(err => { throw err; }); // overloads: should return promise
+  }).then(() => areaDoc);
+}
+
+/**
+ * flow 1. search in Mongodb, if not found, 2. make query to Yelp
+ * @param area term to search
+ */
+export const getAreaSummaries = (area: string): Promise<IArea> => {
+  return AreaModel.findOne({
+    term: area
+  } as IArea).exec() // !findOne().then() is not a full-fludged promise
+    .then(res => {
+      logger.debug(`findOne: ${res}`);
+      if (!res) {
+        // make request to Yelp GraphQL APIs
+        // TODO add logger
+        logger.info(`peform search query from Yelp: ${area}`);
+        return storeAreaSummaries(area);
+      }
+      return res;
+    })
+    .catch(err => {
+      logger.debug(err);
+      throw err;
+    });
 }

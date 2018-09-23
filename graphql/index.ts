@@ -2,6 +2,21 @@ import { importSchema } from 'graphql-import';
 import { gql } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import { prettyPrintJson } from '../common';
+import { IArea } from '../types';
+import { getAreaSummaries } from '../services/areaSummary';
+import logger from '../common/logger';
+
+const printArgsInResolvers = (obj: any, args?: any, context?: any, info?: any) => {
+  logger.debug(` in Area { term }
+--- prev obj
+${prettyPrintJson(obj)}
+--- args
+${prettyPrintJson(args)}
+--- context
+${prettyPrintJson(context)}
+--- info
+${prettyPrintJson(info)}`);
+}
 
 // runtime: should use static directory
 const typeDefs = gql(importSchema(`${__dirname}/area.graphql`));
@@ -20,34 +35,31 @@ const mockAreaSummary = {
   }]
 }
 
+interface areaSummaryObject {
+  term: string;
+}
+
 const resolvers = {
   Query: {
-    areaSummary(term: string) {
-      return mockAreaSummary
+    areaSummary(obj: any, args: {}) {
+      const {term} = args as areaSummaryObject;
+      logger.log('debug', `searching areaSummary, area ${term}`);
+      // TODO: flow 1. search in Mongodb, if not found, 2. make query to Yelp
+      return getAreaSummaries(term);
     }
   },
   Area: {
     term(obj: any, args: any, context: any, info: any) {
-      console.log(` in Area { term }
---- prev obj
-${prettyPrintJson(obj)}
---- args
-${prettyPrintJson(args)}
---- context
-${prettyPrintJson(context)}
---- info
-${prettyPrintJson(info)}`);
-      return mockAreaSummary.term;
+      // printArgsInResolvers(obj);
+      return obj.term;
     },
-    feature_places() {
-      return mockAreaSummary.feature_places;
+    feature_places(area: IArea) {
+      return area.feature_places;
     },
-    place_of_interest_summaries() {
-      return mockAreaSummary.place_of_interest_summaries;
+    place_of_interest_summaries(area: IArea) {
+      return area.place_of_interest_summaries;
     }
-  },
-
+  }
 }
 
-// console.log(typeDefs);
 export const areaSchemaConfig = { typeDefs, resolvers };

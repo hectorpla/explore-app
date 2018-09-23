@@ -23,7 +23,6 @@ export const storeCategories = (queryCountry: string) => fetch(YELP_GRAPHQL_URL,
   method: 'POST',
   headers: graphqlHeaderFactory(),
   body: categoryQueryFactory(queryCountry),
-  // useNewUrlParser: true
 }).then(res => res.json())
   .then(result => {
     console.log(result);

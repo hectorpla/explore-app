@@ -10,3 +10,5 @@ export const graphqlHeaderFactory = (apiKey?: string) => ({
 });
 
 export const prettyPrintJson = (obj: Object) => JSON.stringify(obj, null, 2);
+
+export * from './setup';
