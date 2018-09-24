@@ -31,7 +31,7 @@ export interface IBusiness {
   url?: string;
   location?: ILocation;
   coordinates?: ICoordinates;
-  photos?: string[];
+  photos: string[];
   reviews?: string[];
 
   // TODO tentative field following:
@@ -55,6 +55,7 @@ export interface IPlaceOfInterestSummary {
   total: number;
   tops: {
     name: string;
+    photos: string[];
   }[]; // records of the top 5? elements
 }
 
@@ -69,15 +70,11 @@ export interface IArea {
   place_of_interest_summaries: IPlaceOfInterestSummary[];
 }
 
-export interface Somei {
-
-}
-
 // ! weird, the following snippet compile!!!
-const area= {
+const area = {
   term: '',
   // feature_places: [],
   // place_of_interest_summaries: []
-} as IArea
+} as { [key in keyof IArea]: any }
 
 // TODO add event

@@ -1,9 +1,8 @@
 import { importSchema } from 'graphql-import';
 import { gql } from 'apollo-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
 import { prettyPrintJson } from '../common';
 import { IArea } from '../types';
-import { getAreaSummaries } from '../services/areaSummary';
+import { getAreaSummaries, getAllAreas, getAllPhotos } from '../services/areaSummary';
 import logger from '../common/logger';
 
 const printArgsInResolvers = (obj: any, args?: any, context?: any, info?: any) => {
@@ -35,21 +34,29 @@ const mockAreaSummary = {
   }]
 }
 
-interface areaSummaryObject {
+interface simpleSearchArgsObject {
   term: string;
 }
 
 const resolvers = {
   Query: {
     areaSummary(obj: any, args: {}) {
-      const {term} = args as areaSummaryObject;
-      logger.log('debug', `searching areaSummary, area ${term}`);
-      // TODO: flow 1. search in Mongodb, if not found, 2. make query to Yelp
+      const { term } = args as simpleSearchArgsObject;
+      logger.debug(`searching areaSummary, area ${term}`);
       return getAreaSummaries(term);
+    },
+    topAreas() {
+      return getAllAreas();
+    },
+    // TODO add photos summaries
+    photos(obj: any, args: {}) {
+      const { term } = args as simpleSearchArgsObject;
+      return getAllPhotos(term);
     }
   },
   Area: {
-    term(obj: any, args: any, context: any, info: any) {
+    // a resolover takes the following arguments 
+    term(obj: IArea, args: any, context: any, info: any) {
       // printArgsInResolvers(obj);
       return obj.term;
     },
@@ -59,7 +66,8 @@ const resolvers = {
     place_of_interest_summaries(area: IArea) {
       return area.place_of_interest_summaries;
     }
-  }
+  },
+
 }
 
 export const areaSchemaConfig = { typeDefs, resolvers };

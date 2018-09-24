@@ -32,10 +32,10 @@ const PlaceOfInterestSummarySchema = new mongoose.Schema({
 const AreaSchema = new mongoose.Schema({
   term: {
     type: String,
-    unique: true
+    unique: true,
+    lowercase: true
   },
   place_of_interest_summaries: [PlaceOfInterestSummarySchema],
-
 } as { [key in keyof IArea]: any });
 
 // export const findOneArea = (condition: {}) => {

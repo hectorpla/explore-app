@@ -16,6 +16,9 @@ type Area {
 
 type Query {
   areaSummary(term: String!): Area
+  topAreas: [String!]!
+  # TODO add meta info like place name for photos
+  photos(term: String!): [String!]!
 }
 
 schema {

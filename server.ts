@@ -7,11 +7,11 @@ import { setup } from './common';
 const apolloServer = new ApolloServer(areaSchemaConfig);
 const app = express();
 
-apolloServer.applyMiddleware({ 
+apolloServer.applyMiddleware({
   app,
   path: '/graphql'
 });
 
 setup().then(() => {
-  app.listen(process.env.PORT || 3000, () => console.log('listening...'));
-})
+  app.listen(process.env.PORT || 3010, () => console.log('listening...'));
+});
