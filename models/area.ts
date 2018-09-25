@@ -20,7 +20,7 @@ const BusinessSchema = new mongoose.Schema({
   url: String,
   rating: Number,
   categories: [String],
-  photos: String,
+  photos: [String],
 } as { [key in keyof IBusiness]: any });
 
 const PlaceOfInterestSummarySchema = new mongoose.Schema({
@@ -38,16 +38,6 @@ const AreaSchema = new mongoose.Schema({
   place_of_interest_summaries: [PlaceOfInterestSummarySchema],
 } as { [key in keyof IArea]: any });
 
-// export const findOneArea = (condition: {}) => {
-//   return new Promise((resolve, reject) => {
-//     AreaModel.findOne(condition, (err, res) => {
-//       if (err) { reject(err); }
-//       if (res) {
-//         resolve(res);
-//       } else { reject('unexpected error'); }
-//     })
-//   });
-// }
 
 /**
  * refers to https://brianflove.com/2016/10/04/typescript-declaring-mongoose-schema-model/

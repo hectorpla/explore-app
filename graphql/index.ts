@@ -1,9 +1,10 @@
 import { importSchema } from 'graphql-import';
 import { gql } from 'apollo-server-express';
 import { prettyPrintJson } from '../common';
-import { IArea } from '../types';
-import { getAreaSummaries, getAllAreas, getAllPhotos } from '../services/areaSummary';
+import { IArea, IPhoto } from '../types';
+import { getAreaSummaries, getAllPhotos, getPhotosFromArea } from '../services/areaSummary';
 import logger from '../common/logger';
+import { getAllAreas } from '../services/topLevelInfo';
 
 const printArgsInResolvers = (obj: any, args?: any, context?: any, info?: any) => {
   logger.debug(` in Area { term }
@@ -48,7 +49,7 @@ const resolvers = {
     topAreas() {
       return getAllAreas();
     },
-    // TODO add photos summaries
+    // TODO deprecate it, this is composed to the areaSummary subquery
     photos(obj: any, args: {}) {
       const { term } = args as simpleSearchArgsObject;
       return getAllPhotos(term);
@@ -65,9 +66,11 @@ const resolvers = {
     },
     place_of_interest_summaries(area: IArea) {
       return area.place_of_interest_summaries;
+    },
+    photos(area: IArea): IPhoto[] {
+      return getPhotosFromArea(area);
     }
-  },
-
+  }
 }
 
 export const areaSchemaConfig = { typeDefs, resolvers };

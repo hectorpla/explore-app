@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import logger from '../common/logger';
 
-import { IArea, IBusiness, IPlaceOfInterestSummary } from '../types';
-import { AreaModel } from '../models';
+import { IArea, IBusiness, IPlaceOfInterestSummary, IPhoto, IYelpBusiness } from '../types';
+import { AreaModel, IAreaModel } from '../models';
 import { YELP_GRAPHQL_URL, graphqlHeaderFactory, prettyPrintJson } from '../common';
 import { PLACE_INTEREST } from '../constants';
 import { deduplicate } from './utils';
@@ -31,7 +31,7 @@ const areaQueryFactory = (area: string, category: string) => `query {
 
 interface ISearchResult {
   total: number;
-  business: IBusiness[];
+  business: IYelpBusiness[];
 }
 
 // TODO type the result
@@ -119,51 +119,58 @@ export const getAreaSummaries = (area: string): Promise<IArea> => {
       logger.debug(`findOne: ${res}`);
       if (!res) {
         // make request to Yelp GraphQL APIs
-        logger.info(`peform search query from Yelp: ${area}`);
+        logger.info(`perform search query from Yelp: ${area}`);
         return storeAreaSummaries(area);
       }
       return res;
     })
-    .catch(err => {
-      logger.debug(err);
-      throw err;
-    });
 }
 
 /**
- * get all top level area in the db
+ * retrive all photos from all different categories
+ * @param areaSummary an Area document
  */
-export const getAllAreas = (): Promise<string[]> =>
-  AreaModel.find({}).exec()
-    .then(res => res.map(area => area.term));
+export const getPhotosFromArea = (areaSummary: IArea): IPhoto[] => {
+  const places = _.flatten(areaSummary.place_of_interest_summaries
+    .map(summary => summary.tops));
+  const uniquePlaces = deduplicate(places, summary => summary.name);
+
+  // TODO nested mapping not easy to read, refactor it
+  return _.flatten(
+    uniquePlaces
+      .map(place => {
+        if (place.photos === undefined) {
+          throw new NonNullableGraphQLError(
+            "Area { place_of_interest_summaries { tops { photos } } }");
+        }
+        logger.debug(`${place.photos}: ${Array.isArray(place.photos)}`);
+        return place.photos.map(photo => ({
+          url: photo,
+          place_name: place.name,
+          place_id: place.alias
+        }))
+      })
+  );
+}
 
 /**
  * get photos urls from top places in every categories of places
+ * TODO to deprecate
  * @param area 
  */
-export const getAllPhotos = (area: string): Promise<string[]> => {
+export const getAllPhotos = (area: string): Promise<IPhoto[]> => {
   return AreaModel.findOne({ term: area }).exec()
-    .then(areaSummary => {
-      if (!areaSummary) {
+    .then((area) => {
+      if (!area) {
         throw Error('area not found');
       }
-      const places = _.flatten(areaSummary.place_of_interest_summaries
-        .map(summary => summary.tops));
-      try {
-        return _.flatten(
-          deduplicate(places, summary => summary.name)
-            .map(place => {
-              if (place.photos === undefined) {
-                throw new NonNullableGraphQLError(
-                  "Area { place_of_interest_summaries { tops { photos } } }");
-              }
-              return place.photos;
-            })
-        );
-      } catch (err) {
-        if (!(err instanceof NonNullableGraphQLError)) { throw err; }
-        // TODO unsure, test
-        return storeAreaSummaries(area).then(() => getAllPhotos(area));
-      }
+      return getPhotosFromArea(area);
+    })
+    .catch(err => {
+      if (!(err instanceof NonNullableGraphQLError)) { throw err; }
+      // TODO unsure, test
+      return storeAreaSummaries(area).then(() => getAllPhotos(area));
     });
 }
+
+// TODO add a checker for valid area name

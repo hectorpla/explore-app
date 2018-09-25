@@ -24,7 +24,7 @@ export interface ICoordinates {
   longitude: number;
 }
 
-export interface IBusiness {
+export interface IYelpBusiness {
   name: string;
   categories: ICategory[];
   alias: string; // unique
@@ -50,13 +50,22 @@ export interface IGeometry {
   frame?: ICoordinates[];
 }
 
+// ! copy from IYelpBusiness, only changing the type of categories
+export interface IBusiness {
+  name: string;
+  categories: string[]; // 
+  alias: string; // unique
+  url?: string;
+  location?: ILocation;
+  coordinates?: ICoordinates;
+  photos: string[];
+  reviews?: string[];
+}
+
 export interface IPlaceOfInterestSummary {
   category: string;
   total: number;
-  tops: {
-    name: string;
-    photos: string[];
-  }[]; // records of the top 5? elements
+  tops: IBusiness[]; // records of the top 5? elements
 }
 
 // TODO use libray like typeGraphql to make it sync with the mongodb mdoel
@@ -76,5 +85,12 @@ const area = {
   // feature_places: [],
   // place_of_interest_summaries: []
 } as { [key in keyof IArea]: any }
+
+// should sync with the graphql schema
+export interface IPhoto {
+  url: string;
+  place_name: string;
+  place_id: string;
+}
 
 // TODO add event

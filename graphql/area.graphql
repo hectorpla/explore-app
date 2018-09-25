@@ -1,5 +1,5 @@
 type Business {
-  name: String
+  name: String!
 }
 
 type PlaceOfInterestSummary {
@@ -9,16 +9,24 @@ type PlaceOfInterestSummary {
 }
 
 type Area {
-  term: String
+  term: String!
   feature_places: [String!]
   place_of_interest_summaries: [PlaceOfInterestSummary!]!
+  photos: [Photo!]!
+}
+
+type Photo {
+  url: String!
+  place_name: String!
+  place_id: String!
 }
 
 type Query {
   areaSummary(term: String!): Area
   topAreas: [String!]!
-  # TODO add meta info like place name for photos
-  photos(term: String!): [String!]!
+
+  # TODO deprecate this
+  photos(term: String!): [Photo!]!
 }
 
 schema {
