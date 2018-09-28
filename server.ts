@@ -1,10 +1,10 @@
 import express = require('express');
 import { ApolloServer } from 'apollo-server-express';
-import { areaSchemaConfig } from './graphql';
+import { schemaConfig } from './graphql';
 
 import { setup } from './common';
 
-const apolloServer = new ApolloServer(areaSchemaConfig);
+const apolloServer = new ApolloServer(schemaConfig);
 const app = express();
 
 apolloServer.applyMiddleware({

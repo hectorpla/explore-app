@@ -5,6 +5,8 @@ import { IArea, IPhoto } from '../types';
 import { getAreaSummaries, getAllPhotos, getPhotosFromArea } from '../services/areaSummary';
 import logger from '../common/logger';
 import { getAllAreas } from '../services/topLevelInfo';
+import { YELPVariables } from './yelp/__generated__/YELP';
+import { getBusinessInfo } from '../services/business';
 
 const printArgsInResolvers = (obj: any, args?: any, context?: any, info?: any) => {
   logger.debug(` in Area { term }
@@ -53,6 +55,10 @@ const resolvers = {
     photos(obj: any, args: {}) {
       const { term } = args as simpleSearchArgsObject;
       return getAllPhotos(term);
+    },
+    // original YELP graphql API
+    business(obj: any, { id }: YELPVariables) {
+      return getBusinessInfo(id);
     }
   },
   Area: {
@@ -70,7 +76,10 @@ const resolvers = {
     photos(area: IArea): IPhoto[] {
       return getPhotosFromArea(area);
     }
-  }
+  },
+
+  // original YELP graphql API
+
 }
 
-export const areaSchemaConfig = { typeDefs, resolvers };
+export const schemaConfig = { typeDefs, resolvers };

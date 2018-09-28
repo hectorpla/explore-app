@@ -1,3 +1,5 @@
+import { inspect } from 'util';
+
 export const YELP_GRAPHQL_URL = 'https://api.yelp.com/v3/graphql';
 
 /**
@@ -10,5 +12,11 @@ export const graphqlHeaderFactory = (apiKey?: string) => ({
 });
 
 export const prettyPrintJson = (obj: Object) => JSON.stringify(obj, null, 2);
+
+export const deepLog = (obj: any, depth: number | null = null) => {
+  console.log(inspect(obj, false, depth, true));
+}
+
+export const inspectObject = (obj: any) => inspect(obj, false, null, true);
 
 export * from './setup';

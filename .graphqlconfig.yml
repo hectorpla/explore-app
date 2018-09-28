@@ -2,4 +2,5 @@
 projects:
   app:
     schemaPath: graphql/area.graphql
-    includes: ["**/*.graphql", "**/*.gql"]
+    includes: ["**/*.graphql", "**/*.gql"],
+    excludes: ["./graphql/yelp/*.gql"] # not working

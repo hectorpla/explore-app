@@ -15,21 +15,88 @@ type Area {
   photos: [Photo!]!
 }
 
-type Photo {
-  url: String!
-  place_name: String!
-  place_id: String!
-}
-
 type Query {
   areaSummary(term: String!): Area
   topAreas: [String!]!
 
   # TODO deprecate this
   photos(term: String!): [Photo!]!
+
+  # YELP api, don't the origin defintion, derive from the genearated ts types?
+  business(id: String!): YelpBusiness
 }
 
 schema {
   query: Query
 }
 
+
+type Photo {
+  url: String!
+  place_name: String!
+  place_id: String!
+}
+
+##
+# Yelp defintion
+##
+# interface IYelpCategory {
+#   title: String
+#   alias: String
+# }
+
+type YelpParentCategory {
+  title: String
+  alias: String
+}
+
+type YelpCategory {
+  title: String
+  alias: String
+  parent_categories: [YelpCategory]
+}
+
+type YelpLocation {
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  post_code: String
+  country: String
+  formatted_address: String
+}
+
+type Coordinates {
+  latitude: Float
+  longitude: Float
+}
+
+type YelpReview {
+  id: String
+  rating: Float
+  text: String
+  # don't support here (supported in)
+}
+
+# merge with the application Defintion (Business)
+type YelpBusiness {
+  name: String
+  id: String
+  alias: String
+  is_claimed: Boolean
+  is_closed: Boolean
+  url: String
+  phone: String
+  display_phone: String
+  review_count: Int
+  # not sure if working:
+  categories: YelpCategory
+  rating: Float
+  price: String
+  location: YelpLocation
+  coordinates: Coordinates
+  photos: [String]
+  reviews: [YelpReview]
+  distance: Float
+}

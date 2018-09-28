@@ -3,9 +3,9 @@ import * as _ from 'lodash';
 import gql from 'graphql-tag';
 import logger from '../common/logger';
 
-import { IArea, IBusiness, IPlaceOfInterestSummary, IPhoto, IYelpBusiness } from '../types';
+import { IArea, IPlaceOfInterestSummary, IPhoto, IYelpBusiness } from '../types';
 import { AreaModel, IAreaModel } from '../models';
-import { YELP_GRAPHQL_URL, graphqlHeaderFactory, prettyPrintJson } from '../common';
+import { YELP_GRAPHQL_URL, graphqlHeaderFactory } from '../common';
 import { PLACE_INTEREST } from '../constants';
 import { deduplicate } from './utils';
 import { NonNullableGraphQLError } from './utils/errors';
@@ -143,7 +143,7 @@ export const getPhotosFromArea = (areaSummary: IArea): IPhoto[] => {
           throw new NonNullableGraphQLError(
             "Area { place_of_interest_summaries { tops { photos } } }");
         }
-        logger.debug(`${place.photos}: ${Array.isArray(place.photos)}`);
+        // logger.debug(`${place.photos}: ${Array.isArray(place.photos)}`);
         return place.photos.map(photo => ({
           url: photo,
           place_name: place.name,

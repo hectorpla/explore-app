@@ -1,4 +1,11 @@
+.vscode/settings.json
 package-lock.json
+
+# graphql schema
+**/**/*schema.json
+
+# generated types in ts
+graphql/**/__generated__/
 
 # Logs
 logs

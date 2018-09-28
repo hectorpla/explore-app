@@ -1,5 +1,8 @@
+import { YELP_business_location, YELP_business_coordinates, YELP_business } from "../graphql/yelp/__generated__/YELP";
+
 /**
  * definition all refering to yelp graphql apis
+ * ! see ../graphql/yelp/__generated__/YELP
  */
 
 export interface IRawCategory {
@@ -11,7 +14,8 @@ export interface ICategory extends IRawCategory {
   parent_categories: IRawCategory[];
 }
 
-export interface ILocation {
+// ! not sure the effect of extending
+export interface ILocation extends Partial<YELP_business_location> {
   city: string;
   state?: string;
   postal_code: string;
@@ -19,7 +23,7 @@ export interface ILocation {
   formatted_address: string;
 }
 
-export interface ICoordinates {
+export interface ICoordinates extends YELP_business_coordinates {
   latitude: number;
   longitude: number;
 }
