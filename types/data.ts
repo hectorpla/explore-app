@@ -1,4 +1,14 @@
-import { YELP_business_location, YELP_business_coordinates, YELP_business } from "../graphql/yelp/__generated__/YELP";
+import {
+  YELP_business_location,
+  YELP_business_coordinates,
+  YELP_business
+} from "../graphql/yelp/__generated__/YELP";
+
+export interface IHitList {
+  name: string;
+  lastModified: Date;
+  list: any[];
+}
 
 /**
  * definition all refering to yelp graphql apis
@@ -43,7 +53,6 @@ export interface IYelpBusiness {
   // distance: number; // only in dynamic search
 }
 
-
 /**
  * derived data structure from yelp
  */
@@ -57,7 +66,7 @@ export interface IGeometry {
 // ! copy from IYelpBusiness, only changing the type of categories
 export interface IBusiness {
   name: string;
-  categories: string[]; // 
+  categories: string[]; //
   alias: string; // unique
   url?: string;
   location?: ILocation;
@@ -85,10 +94,10 @@ export interface IArea {
 
 // ! weird, the following snippet compile!!!
 const area = {
-  term: '',
+  term: ""
   // feature_places: [],
   // place_of_interest_summaries: []
-} as { [key in keyof IArea]: any }
+} as { [key in keyof IArea]: any };
 
 // should sync with the graphql schema
 export interface IPhoto {

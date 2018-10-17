@@ -1,10 +1,17 @@
+# should align with the definition in models/area.ts
 type Business {
   name: String!
+  alias: String!
+  url: String
+  rating: Float
+  categories: [String!]!
+  photos: [String!]
 }
 
 type PlaceOfInterestSummary {
   category: String!
   total: Int!
+  # use self-defined Business here instead of the YelpOne, align with shape in DB
   tops: [Business!]!
 }
 
@@ -24,12 +31,17 @@ type Query {
 
   # YELP api, don't the origin defintion, derive from the genearated ts types?
   business(id: String!): YelpBusiness
+
+  categories: [String!]
+
+  # ? whether this query is necessary?
+  # term refer to the name of area
+  places(term: String!, category: String!): [Business!]
 }
 
 schema {
   query: Query
 }
-
 
 type Photo {
   url: String!
@@ -62,7 +74,7 @@ type YelpLocation {
   address3: String
   city: String
   state: String
-  post_code: String
+  postal_code: String
   country: String
   formatted_address: String
 }
@@ -72,11 +84,18 @@ type Coordinates {
   longitude: Float
 }
 
+type YelpUser {
+  id: String
+  image_url: String
+  profile_url: String
+  name: String
+}
+
 type YelpReview {
   id: String
   rating: Float
   text: String
-  # don't support here (supported in)
+  user: YelpUser
 }
 
 # merge with the application Defintion (Business)

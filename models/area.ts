@@ -1,17 +1,15 @@
-import mongoose from 'mongoose';
-import { IArea, IBusiness, IPlaceOfInterestSummary } from '../types';
+import mongoose from "mongoose";
+import { IArea, IBusiness, IPlaceOfInterestSummary } from "../types";
 
 /**
  * pattern: as {[key in keyof <Interface>]: any}, a link to type defintion
  * boilerplate to sync keys between defintions of types and db models
  * issues:
  * 1. `shallow` check
- * 2. shadow the type of SchemaDefinition as the first 
+ * 2. shadow the type of SchemaDefinition as the first
  */
 
-export interface IAreaModel extends mongoose.Document, IArea {
-
-}
+export interface IAreaModel extends mongoose.Document, IArea {}
 
 // a simplified version of business type
 const BusinessSchema = new mongoose.Schema({
@@ -20,7 +18,7 @@ const BusinessSchema = new mongoose.Schema({
   url: String,
   rating: Number,
   categories: [String],
-  photos: [String],
+  photos: [String]
 } as { [key in keyof IBusiness]: any });
 
 const PlaceOfInterestSummarySchema = new mongoose.Schema({
@@ -35,12 +33,11 @@ const AreaSchema = new mongoose.Schema({
     unique: true,
     lowercase: true
   },
-  place_of_interest_summaries: [PlaceOfInterestSummarySchema],
+  place_of_interest_summaries: [PlaceOfInterestSummarySchema]
 } as { [key in keyof IArea]: any });
-
 
 /**
  * refers to https://brianflove.com/2016/10/04/typescript-declaring-mongoose-schema-model/
  * the generic bind the document to json
  */
-export const AreaModel = mongoose.model<IAreaModel>('Area', AreaSchema);
+export const AreaModel = mongoose.model<IAreaModel>("Area", AreaSchema);

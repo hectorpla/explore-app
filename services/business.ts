@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import gql from 'graphql-tag';
 
 import { YELP_GRAPHQL_URL, graphqlHeaderFactory, inspectObject } from '../common';
-import { deepLog } from './utils';
 import { YELP_business } from '../graphql/yelp/__generated__/YELP';
 import logger from '../common/logger';
 
